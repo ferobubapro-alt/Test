@@ -1,3 +1,5 @@
+[file name]: DSHt-BestSave.txt
+[file content begin]
 -- SERVICES
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
@@ -128,7 +130,7 @@ local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
 MainFrame.Size = UDim2.new(0, 680, 0, 420)
 MainFrame.Position = UDim2.new(0.5, -340, 0.5, -210)
-MainFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255) -- UIGradient için beyaz zemin
+MainFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 MainFrame.ClipsDescendants = true
 MainFrame.Active = true
 MainFrame.Parent = ScreenGui
@@ -193,7 +195,7 @@ local MoonIcon = Instance.new("ImageLabel", TopBar)
 MoonIcon.Size = UDim2.new(0, 38, 0, 38)
 MoonIcon.Position = UDim2.new(0, 10, 0.5, -19)
 MoonIcon.BackgroundTransparency = 1
-MoonIcon.Image = "rbxassetid://126964821713679"  -- YENİ LOGO ID
+MoonIcon.Image = "rbxassetid://126964821713679"
 MoonIcon.ScaleType = Enum.ScaleType.Fit
 
 local TitleLabel = Instance.new("TextLabel", TopBar)
@@ -320,8 +322,8 @@ MinimizeBtn.MouseButton1Click:Connect(function()
         
         MinimizeBtn.Size = UDim2.new(1, 0, 1, 0)
         MinimizeBtn.Position = UDim2.new(0, 0, 0, 0)
-        MinimizeBtn.Image = "rbxassetid://126964821713679"  -- YENİ LOGO ID
-        MinimizeBtn.ScaleType = Enum.ScaleType.Fit          -- TAM OTURTMA
+        MinimizeBtn.Image = "rbxassetid://126964821713679"
+        MinimizeBtn.ScaleType = Enum.ScaleType.Fit
         
         TweenService:Create(MainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = minimizedSize}):Play()
         TweenService:Create(MainCorner, TweenInfo.new(0.4), {CornerRadius = UDim.new(0, 12)}):Play()
@@ -329,7 +331,7 @@ MinimizeBtn.MouseButton1Click:Connect(function()
         MinimizeBtn.Position = UDim2.new(1, -52, 0.5, -8)
         MinimizeBtn.Size = UDim2.new(0, 16, 0, 16)
         MinimizeBtn.Image = "rbxassetid://10751034456"
-        MinimizeBtn.ScaleType = Enum.ScaleType.Fit -- emniyet olsun
+        MinimizeBtn.ScaleType = Enum.ScaleType.Fit
         
         local sizeTween = TweenService:Create(MainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = originalSize})
         sizeTween:Play()
@@ -578,7 +580,7 @@ TpRandomBtn.MouseButton1Click:Connect(function()
 end)
 
 -- ==========================================
--- [4] STARS TAB (ÖZELLİKLER & HİLELER)
+-- [4] STARS TAB (ÖZELLİKLER & HİLELER) – GRUPLARA AYRILMIŞ
 -- ==========================================
 local StarsTitle = Instance.new("TextLabel", StarsTab)
 StarsTitle.Size = UDim2.new(1, 0, 0, 30); StarsTitle.BackgroundTransparency = 1; StarsTitle.Text = "Özellikler & Hileler"
@@ -587,9 +589,61 @@ StarsTitle.TextColor3 = Color3.fromRGB(255, 255, 255); StarsTitle.Font = Enum.Fo
 local StarScroll = Instance.new("ScrollingFrame", StarsTab)
 StarScroll.Size = UDim2.new(1, -10, 1, -40); StarScroll.Position = UDim2.new(0, 5, 0, 40)
 StarScroll.BackgroundTransparency = 1; StarScroll.BorderSizePixel = 0; StarScroll.ScrollBarThickness = 3
-local StarLayout = Instance.new("UIListLayout", StarScroll); StarLayout.Padding = UDim.new(0, 8); StarLayout.SortOrder = Enum.SortOrder.LayoutOrder
+StarScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y -- Otomatik boyut
+StarScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+local StarLayout = Instance.new("UIListLayout", StarScroll)
+StarLayout.Padding = UDim.new(0, 12)
+StarLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
--- ESP Seçici
+-- GRUP OLUŞTURMA FONKSİYONU (YENİ)
+local GroupTitles = {}
+local function CreateFeatureGroup(parentTab, titleTR, titleEN)
+    local GroupFrame = Instance.new("Frame")
+    GroupFrame.Name = "Group_" .. titleEN
+    GroupFrame.Size = UDim2.new(1, 0, 0, 0)
+    GroupFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+    GroupFrame.BackgroundTransparency = 0.3
+    GroupFrame.AutomaticSize = Enum.AutomaticSize.Y
+    GroupFrame.Parent = parentTab
+
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(0, 8)
+    UICorner.Parent = GroupFrame
+
+    local TitleLabel = Instance.new("TextLabel")
+    TitleLabel.Size = UDim2.new(1, -20, 0, 30)
+    TitleLabel.Position = UDim2.new(0, 10, 0, 5)
+    TitleLabel.BackgroundTransparency = 1
+    TitleLabel.Text = CurrentLanguage == "TR" and titleTR or titleEN
+    TitleLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+    TitleLabel.Font = Enum.Font.GothamBold
+    TitleLabel.TextSize = 14
+    TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+    TitleLabel.Parent = GroupFrame
+
+    GroupTitles[GroupFrame] = {TR = titleTR, EN = titleEN, Label = TitleLabel}
+
+    local GroupLayout = Instance.new("UIListLayout")
+    GroupLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    GroupLayout.Padding = UDim.new(0, 8)
+    GroupLayout.Parent = GroupFrame
+
+    local GroupPadding = Instance.new("UIPadding")
+    GroupPadding.PaddingTop = UDim.new(0, 40)
+    GroupPadding.PaddingBottom = UDim.new(0, 10)
+    GroupPadding.PaddingLeft = UDim.new(0, 10)
+    GroupPadding.PaddingRight = UDim.new(0, 10)
+    GroupPadding.Parent = GroupFrame
+
+    return GroupFrame
+end
+
+-- Grupları oluştur
+local playerGroup = CreateFeatureGroup(StarScroll, "Oyuncu", "Player")
+local visualGroup  = CreateFeatureGroup(StarScroll, "Görseller", "Visuals")
+local miscGroup    = CreateFeatureGroup(StarScroll, "Diğer", "Misc")
+
+-- ESP Seçici (popup)
 local ESPPickerFrame = Instance.new("Frame", MainFrame)
 ESPPickerFrame.Size = UDim2.new(0, 220, 0, 140); ESPPickerFrame.Position = UDim2.new(0.5, -110, 0.5, -70); ESPPickerFrame.BackgroundColor3 = Color3.fromRGB(20, 21, 26); ESPPickerFrame.Visible = false; ESPPickerFrame.ZIndex = 10
 Instance.new("UICorner", ESPPickerFrame).CornerRadius = UDim.new(0, 8)
@@ -611,11 +665,13 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
+-- Panel oluşturma (değiştirildi: parent parametresi eklendi)
 local panelsList = {}; local layoutCounter = 0
-local function CreateModPanel(name, hasSlider, maxSliderVal, defaultSliderVal, onToggle, onSliderChange)
+local function CreateModPanel(parent, name, hasSlider, maxSliderVal, defaultSliderVal, onToggle, onSliderChange)
     layoutCounter = layoutCounter + 1
-    local Container = Instance.new("Frame", StarScroll)
-    Container.Size = UDim2.new(1, -6, 0, 45); Container.LayoutOrder = layoutCounter
+    local Container = Instance.new("Frame", parent)
+    Container.Size = UDim2.new(1, -6, 0, 45)
+    Container.LayoutOrder = layoutCounter
     ApplyWaveGradient(Container, Color3.fromRGB(80, 0, 0), Color3.fromRGB(15, 15, 20))
     Instance.new("UICorner", Container).CornerRadius = UDim.new(0, 8)
     local cStr = Instance.new("UIStroke", Container)
@@ -685,7 +741,7 @@ local function StopFly()
     if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then LocalPlayer.Character.Humanoid.PlatformStand = false end
     ShowNotification("Fly", Translates[CurrentLanguage].FlyDeactive, 2)
 end
-CreateModPanel("Fly Hack", true, 500, 50, function(active) if active then StartFly() else StopFly() end end, function(val) flySpeed = val end)
+CreateModPanel(playerGroup, "Fly Hack", true, 500, 50, function(active) if active then StartFly() else StopFly() end end, function(val) flySpeed = val end)
 
 local espEnabled = false; local ESPFolder = Instance.new("Folder", CoreGui); ESPFolder.Name = "HiddenDarkerESP"
 local function ApplyESPToAll()
@@ -697,13 +753,17 @@ local function ApplyESPToAll()
     end
 end
 ApplyESPBtn.MouseButton1Click:Connect(function() ESPPickerFrame.Visible = false; ApplyESPToAll(); ShowNotification("ESP", Translates[CurrentLanguage].EspApplied, 3) end)
-CreateModPanel("Player ESP", false, 0, 0, function(active) espEnabled = active; if active then ESPPickerFrame.Visible = true else ESPPickerFrame.Visible = false; ESPFolder:ClearAllChildren() end end, nil)
-CreateModPanel("Speed Changer", true, 500, 16, function(active) local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid"); if h then h.WalkSpeed = active and 100 or 16 end; ShowNotification("Speed", active and Translates[CurrentLanguage].SpeedActive or Translates[CurrentLanguage].SpeedReset, 2) end, function(val) local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid"); if h then h.WalkSpeed = val end end)
-CreateModPanel("JumpPower", true, 500, 50, function(active) local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid"); if h then h.UseJumpPower = true; h.JumpPower = active and 150 or 50 end; ShowNotification("Jump", active and Translates[CurrentLanguage].JumpActive or Translates[CurrentLanguage].JumpReset, 2) end, function(val) local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid"); if h then h.UseJumpPower = true; h.JumpPower = val end end)
+CreateModPanel(visualGroup, "Player ESP", false, 0, 0, function(active) espEnabled = active; if active then ESPPickerFrame.Visible = true else ESPPickerFrame.Visible = false; ESPFolder:ClearAllChildren() end end, nil)
+
+CreateModPanel(playerGroup, "Speed Changer", true, 500, 16, function(active) local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid"); if h then h.WalkSpeed = active and 100 or 16 end; ShowNotification("Speed", active and Translates[CurrentLanguage].SpeedActive or Translates[CurrentLanguage].SpeedReset, 2) end, function(val) local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid"); if h then h.WalkSpeed = val end end)
+
+CreateModPanel(playerGroup, "JumpPower", true, 500, 50, function(active) local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid"); if h then h.UseJumpPower = true; h.JumpPower = active and 150 or 50 end; ShowNotification("Jump", active and Translates[CurrentLanguage].JumpActive or Translates[CurrentLanguage].JumpReset, 2) end, function(val) local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid"); if h then h.UseJumpPower = true; h.JumpPower = val end end)
+
 local infJumpEnabled = false; UserInputService.JumpRequest:Connect(function() if infJumpEnabled then local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid"); if h then h:ChangeState(Enum.HumanoidStateType.Jumping) end end end)
-CreateModPanel("Infinite Jump", false, 0, 0, function(active) infJumpEnabled = active; ShowNotification("Inf Jump", active and Translates[CurrentLanguage].InfActive or Translates[CurrentLanguage].InfDeactive, 2) end, nil)
+CreateModPanel(playerGroup, "Infinite Jump", false, 0, 0, function(active) infJumpEnabled = active; ShowNotification("Inf Jump", active and Translates[CurrentLanguage].InfActive or Translates[CurrentLanguage].InfDeactive, 2) end, nil)
+
 local noclipConnection, noclipActive = nil, false
-CreateModPanel("Noclip", false, 0, 0, function(active)
+CreateModPanel(playerGroup, "Noclip", false, 0, 0, function(active)
     noclipActive = active
     if active then
         noclipConnection = RunService.Stepped:Connect(function() if LocalPlayer.Character then for _, part in ipairs(LocalPlayer.Character:GetDescendants()) do if part:IsA("BasePart") then part.CanCollide = false end end end end)
@@ -713,9 +773,10 @@ CreateModPanel("Noclip", false, 0, 0, function(active)
     end
 end, nil)
 
--- SPAM & SPECTATE PANELS
+-- SPAM & SPECTATE PANELS (Misc grubunda)
 layoutCounter = layoutCounter + 1
-local SpamPanel = Instance.new("Frame", StarScroll); SpamPanel.Size = UDim2.new(1, -6, 0, 55); SpamPanel.LayoutOrder = layoutCounter
+local SpamPanel = Instance.new("Frame", miscGroup)
+SpamPanel.Size = UDim2.new(1, -6, 0, 55); SpamPanel.LayoutOrder = layoutCounter
 ApplyWaveGradient(SpamPanel, Color3.fromRGB(80, 0, 0), Color3.fromRGB(15, 15, 20))
 Instance.new("UICorner", SpamPanel).CornerRadius = UDim.new(0, 8)
 local spStr = Instance.new("UIStroke", SpamPanel)
@@ -750,7 +811,8 @@ SpamToggleBtn.MouseButton1Click:Connect(function()
 end)
 
 layoutCounter = layoutCounter + 1
-local SpecPanel = Instance.new("Frame", StarScroll); SpecPanel.Size = UDim2.new(1, -6, 0, 110); SpecPanel.LayoutOrder = layoutCounter
+local SpecPanel = Instance.new("Frame", miscGroup)
+SpecPanel.Size = UDim2.new(1, -6, 0, 110); SpecPanel.LayoutOrder = layoutCounter
 ApplyWaveGradient(SpecPanel, Color3.fromRGB(80, 0, 0), Color3.fromRGB(15, 15, 20))
 Instance.new("UICorner", SpecPanel).CornerRadius = UDim.new(0, 8)
 local scStr = Instance.new("UIStroke", SpecPanel)
@@ -990,6 +1052,10 @@ ChangelogText.Text = [[
   - Gorgeous new Wave Gradients for Cards, Hack Panels, Teleport, and Settings.
   - Perfected minimize icon padding.
   - Brand new sleek Sidebar Icons for navigation.
+  
+• Features (Stars) Tab Reorganized:
+  - All hacks are now grouped into "Player", "Visuals", and "Misc" categories.
+  - Each group has its own stylish card, just like the Home tab.
 ]]
 
 -- ==========================================
@@ -1032,6 +1098,11 @@ local function UpdateUILanguage(lang)
     SpecLbl.Text = data.Lookat; SpecBox.PlaceholderText = data.LookatPlace; SpecToggleBtn.Text = spectating and data.UnlookBtn or data.LookatBtn; SpecLastBtn.Text = data.LookLast; SpecRandomBtn.Text = data.LookRand
     FriendsTabTitle.Text = data.Friends; PopulateFriendsList()
     NotifyTitle.Text = data.UpdatesTitle; SettingsTitle.Text = data.Language; LangHeader.Text = data.Language
+    
+    -- Grup başlıklarını güncelle
+    for groupFrame, titleData in pairs(GroupTitles) do
+        titleData.Label.Text = lang == "TR" and titleData.TR or titleData.EN
+    end
     
     if lang == "EN" then
         EngBtn.BackgroundColor3 = Color3.fromRGB(30, 90, 150); TurBtn.BackgroundColor3 = Color3.fromRGB(40, 42, 50)
@@ -1165,3 +1236,4 @@ task.spawn(function()
         TimeLabel.Text = string.format("%02d:%02d:%02d", math.floor(e/3600), math.floor((e%3600)/60), e%60)
     end
 end)
+[file content end]
