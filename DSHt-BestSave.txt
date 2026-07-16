@@ -578,7 +578,7 @@ TpRandomBtn.MouseButton1Click:Connect(function()
 end)
 
 -- ==========================================
--- [4] STARS TAB (ÖZELLİKLER & HİLELER)
+-- [4] STARS TAB (ÖZELLİKLER & HİLELER) – GRUPLANDIRILMIŞ
 -- ==========================================
 local StarsTitle = Instance.new("TextLabel", StarsTab)
 StarsTitle.Size = UDim2.new(1, 0, 0, 30); StarsTitle.BackgroundTransparency = 1; StarsTitle.Text = "Özellikler & Hileler"
@@ -589,7 +589,33 @@ StarScroll.Size = UDim2.new(1, -10, 1, -40); StarScroll.Position = UDim2.new(0, 
 StarScroll.BackgroundTransparency = 1; StarScroll.BorderSizePixel = 0; StarScroll.ScrollBarThickness = 3
 local StarLayout = Instance.new("UIListLayout", StarScroll); StarLayout.Padding = UDim.new(0, 8); StarLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
--- ESP Seçici
+-- KATEGORİ BAŞLIĞI OLUŞTURMA FONKSİYONU
+local function CreateCategoryHeader(titleText)
+    layoutCounter = layoutCounter + 1
+    local HeaderContainer = Instance.new("Frame", StarScroll)
+    HeaderContainer.Size = UDim2.new(1, -10, 0, 28)
+    HeaderContainer.BackgroundTransparency = 1
+    HeaderContainer.LayoutOrder = layoutCounter
+
+    local HeaderTitle = Instance.new("TextLabel", HeaderContainer)
+    HeaderTitle.Size = UDim2.new(1, -10, 1, 0)
+    HeaderTitle.Position = UDim2.new(0, 10, 0, 0)
+    HeaderTitle.BackgroundTransparency = 1
+    HeaderTitle.Text = titleText
+    HeaderTitle.TextColor3 = Color3.fromRGB(156, 179, 255)
+    HeaderTitle.Font = Enum.Font.GothamBold
+    HeaderTitle.TextSize = 14
+    HeaderTitle.TextXAlignment = Enum.TextXAlignment.Left
+
+    local Line = Instance.new("Frame", HeaderContainer)
+    Line.Size = UDim2.new(1, -10, 0, 1)
+    Line.Position = UDim2.new(0, 5, 1, -2)
+    Line.BackgroundColor3 = Color3.fromRGB(156, 179, 255)
+    Line.BackgroundTransparency = 0.5
+    Line.BorderSizePixel = 0
+end
+
+-- ESP Seçici (Stars içinde kullanılacak)
 local ESPPickerFrame = Instance.new("Frame", MainFrame)
 ESPPickerFrame.Size = UDim2.new(0, 220, 0, 140); ESPPickerFrame.Position = UDim2.new(0.5, -110, 0.5, -70); ESPPickerFrame.BackgroundColor3 = Color3.fromRGB(20, 21, 26); ESPPickerFrame.Visible = false; ESPPickerFrame.ZIndex = 10
 Instance.new("UICorner", ESPPickerFrame).CornerRadius = UDim.new(0, 8)
@@ -612,6 +638,8 @@ RunService.RenderStepped:Connect(function()
 end)
 
 local panelsList = {}; local layoutCounter = 0
+
+-- PANEL OLUŞTURUCU (değişmeden)
 local function CreateModPanel(name, hasSlider, maxSliderVal, defaultSliderVal, onToggle, onSliderChange)
     layoutCounter = layoutCounter + 1
     local Container = Instance.new("Frame", StarScroll)
@@ -662,7 +690,7 @@ local function CreateModPanel(name, hasSlider, maxSliderVal, defaultSliderVal, o
     table.insert(panelsList, {Label = Lbl, Key = name})
 end
 
--- Fly, ESP, WalkSpeed, JumpPower, InfJump, Noclip Mantıkları
+-- Fly, ESP, Speed, Jump, InfJump, Noclip mantıkları (değişmedi)
 local isFlying, flySpeed, flyBV, flyBG, flyLoop = false, 50, nil, nil, nil
 local function StartFly()
     local char = LocalPlayer.Character
@@ -685,7 +713,6 @@ local function StopFly()
     if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then LocalPlayer.Character.Humanoid.PlatformStand = false end
     ShowNotification("Fly", Translates[CurrentLanguage].FlyDeactive, 2)
 end
-CreateModPanel("Fly Hack", true, 500, 50, function(active) if active then StartFly() else StopFly() end end, function(val) flySpeed = val end)
 
 local espEnabled = false; local ESPFolder = Instance.new("Folder", CoreGui); ESPFolder.Name = "HiddenDarkerESP"
 local function ApplyESPToAll()
@@ -697,25 +724,69 @@ local function ApplyESPToAll()
     end
 end
 ApplyESPBtn.MouseButton1Click:Connect(function() ESPPickerFrame.Visible = false; ApplyESPToAll(); ShowNotification("ESP", Translates[CurrentLanguage].EspApplied, 3) end)
-CreateModPanel("Player ESP", false, 0, 0, function(active) espEnabled = active; if active then ESPPickerFrame.Visible = true else ESPPickerFrame.Visible = false; ESPFolder:ClearAllChildren() end end, nil)
-CreateModPanel("Speed Changer", true, 500, 16, function(active) local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid"); if h then h.WalkSpeed = active and 100 or 16 end; ShowNotification("Speed", active and Translates[CurrentLanguage].SpeedActive or Translates[CurrentLanguage].SpeedReset, 2) end, function(val) local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid"); if h then h.WalkSpeed = val end end)
-CreateModPanel("JumpPower", true, 500, 50, function(active) local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid"); if h then h.UseJumpPower = true; h.JumpPower = active and 150 or 50 end; ShowNotification("Jump", active and Translates[CurrentLanguage].JumpActive or Translates[CurrentLanguage].JumpReset, 2) end, function(val) local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid"); if h then h.UseJumpPower = true; h.JumpPower = val end end)
+
 local infJumpEnabled = false; UserInputService.JumpRequest:Connect(function() if infJumpEnabled then local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid"); if h then h:ChangeState(Enum.HumanoidStateType.Jumping) end end end)
-CreateModPanel("Infinite Jump", false, 0, 0, function(active) infJumpEnabled = active; ShowNotification("Inf Jump", active and Translates[CurrentLanguage].InfActive or Translates[CurrentLanguage].InfDeactive, 2) end, nil)
+
 local noclipConnection, noclipActive = nil, false
+
+-- =======================================================
+-- GRUPLANMIŞ PANELLER (SIRALI)
+-- =======================================================
+
+-- 1. HAREKET (MOVEMENT)
+CreateCategoryHeader("Hareket (Movement)")
+
+CreateModPanel("Fly", true, 500, 50, function(active) if active then StartFly() else StopFly() end end, function(val) flySpeed = val end)
+
+CreateModPanel("Speed Changer", true, 500, 16, function(active) 
+    local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
+    if h then h.WalkSpeed = active and 100 or 16 end
+    ShowNotification("Speed", active and Translates[CurrentLanguage].SpeedActive or Translates[CurrentLanguage].SpeedReset, 2)
+end, function(val) 
+    local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
+    if h then h.WalkSpeed = val end
+end)
+
+CreateModPanel("JumpPower", true, 500, 50, function(active)
+    local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
+    if h then h.UseJumpPower = true; h.JumpPower = active and 150 or 50 end
+    ShowNotification("Jump", active and Translates[CurrentLanguage].JumpActive or Translates[CurrentLanguage].JumpReset, 2)
+end, function(val)
+    local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
+    if h then h.UseJumpPower = true; h.JumpPower = val end
+end)
+
+CreateModPanel("Infinite Jump", false, 0, 0, function(active)
+    infJumpEnabled = active
+    ShowNotification("Inf Jump", active and Translates[CurrentLanguage].InfActive or Translates[CurrentLanguage].InfDeactive, 2)
+end, nil)
+
 CreateModPanel("Noclip", false, 0, 0, function(active)
     noclipActive = active
     if active then
         noclipConnection = RunService.Stepped:Connect(function() if LocalPlayer.Character then for _, part in ipairs(LocalPlayer.Character:GetDescendants()) do if part:IsA("BasePart") then part.CanCollide = false end end end end)
         ShowNotification("Noclip", Translates[CurrentLanguage].NoclipActive, 2)
     else 
-        if noclipConnection then noclipConnection:Disconnect() end; ShowNotification("Noclip", Translates[CurrentLanguage].NoclipDeactive, 2) 
+        if noclipConnection then noclipConnection:Disconnect() end
+        ShowNotification("Noclip", Translates[CurrentLanguage].NoclipDeactive, 2) 
     end
 end, nil)
 
--- SPAM & SPECTATE PANELS
+-- 2. GÖRSELLER (VISUALS)
+CreateCategoryHeader("Görseller (Visuals)")
+
+CreateModPanel("Player ESP", false, 0, 0, function(active)
+    espEnabled = active
+    if active then ESPPickerFrame.Visible = true else ESPPickerFrame.Visible = false; ESPFolder:ClearAllChildren() end
+end, nil)
+
+-- 3. DİĞER (MISC)
+CreateCategoryHeader("Diğer (Misc)")
+
+-- Spam Panel (özel)
 layoutCounter = layoutCounter + 1
-local SpamPanel = Instance.new("Frame", StarScroll); SpamPanel.Size = UDim2.new(1, -6, 0, 55); SpamPanel.LayoutOrder = layoutCounter
+local SpamPanel = Instance.new("Frame", StarScroll)
+SpamPanel.Size = UDim2.new(1, -6, 0, 55); SpamPanel.LayoutOrder = layoutCounter
 ApplyWaveGradient(SpamPanel, Color3.fromRGB(80, 0, 0), Color3.fromRGB(15, 15, 20))
 Instance.new("UICorner", SpamPanel).CornerRadius = UDim.new(0, 8)
 local spStr = Instance.new("UIStroke", SpamPanel)
@@ -749,8 +820,10 @@ SpamToggleBtn.MouseButton1Click:Connect(function()
     else SpamToggleBtn.Text = Translates[CurrentLanguage].Start; SpamToggleBtn.BackgroundColor3 = Color3.fromRGB(40, 42, 50); if spamThread then task.cancel(spamThread); spamThread = nil end end
 end)
 
+-- Spectate Panel (özel)
 layoutCounter = layoutCounter + 1
-local SpecPanel = Instance.new("Frame", StarScroll); SpecPanel.Size = UDim2.new(1, -6, 0, 110); SpecPanel.LayoutOrder = layoutCounter
+local SpecPanel = Instance.new("Frame", StarScroll)
+SpecPanel.Size = UDim2.new(1, -6, 0, 110); SpecPanel.LayoutOrder = layoutCounter
 ApplyWaveGradient(SpecPanel, Color3.fromRGB(80, 0, 0), Color3.fromRGB(15, 15, 20))
 Instance.new("UICorner", SpecPanel).CornerRadius = UDim.new(0, 8)
 local scStr = Instance.new("UIStroke", SpecPanel)
@@ -990,6 +1063,10 @@ ChangelogText.Text = [[
   - Gorgeous new Wave Gradients for Cards, Hack Panels, Teleport, and Settings.
   - Perfected minimize icon padding.
   - Brand new sleek Sidebar Icons for navigation.
+  
+• Stars Tab Reorganized:
+  - Features grouped into: Movement, Visuals, and Misc categories.
+  - Clean category headers with soft underline.
 ]]
 
 -- ==========================================
