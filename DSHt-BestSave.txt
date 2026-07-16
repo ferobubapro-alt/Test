@@ -128,7 +128,7 @@ local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
 MainFrame.Size = UDim2.new(0, 680, 0, 420)
 MainFrame.Position = UDim2.new(0.5, -340, 0.5, -210)
-MainFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+MainFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255) -- UIGradient için beyaz zemin
 MainFrame.ClipsDescendants = true
 MainFrame.Active = true
 MainFrame.Parent = ScreenGui
@@ -193,7 +193,7 @@ local MoonIcon = Instance.new("ImageLabel", TopBar)
 MoonIcon.Size = UDim2.new(0, 38, 0, 38)
 MoonIcon.Position = UDim2.new(0, 10, 0.5, -19)
 MoonIcon.BackgroundTransparency = 1
-MoonIcon.Image = "rbxassetid://126964821713679"
+MoonIcon.Image = "rbxassetid://126964821713679"  -- YENİ LOGO ID
 MoonIcon.ScaleType = Enum.ScaleType.Fit
 
 local TitleLabel = Instance.new("TextLabel", TopBar)
@@ -320,8 +320,8 @@ MinimizeBtn.MouseButton1Click:Connect(function()
         
         MinimizeBtn.Size = UDim2.new(1, 0, 1, 0)
         MinimizeBtn.Position = UDim2.new(0, 0, 0, 0)
-        MinimizeBtn.Image = "rbxassetid://126964821713679"
-        MinimizeBtn.ScaleType = Enum.ScaleType.Fit
+        MinimizeBtn.Image = "rbxassetid://126964821713679"  -- YENİ LOGO ID
+        MinimizeBtn.ScaleType = Enum.ScaleType.Fit          -- TAM OTURTMA
         
         TweenService:Create(MainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = minimizedSize}):Play()
         TweenService:Create(MainCorner, TweenInfo.new(0.4), {CornerRadius = UDim.new(0, 12)}):Play()
@@ -329,7 +329,7 @@ MinimizeBtn.MouseButton1Click:Connect(function()
         MinimizeBtn.Position = UDim2.new(1, -52, 0.5, -8)
         MinimizeBtn.Size = UDim2.new(0, 16, 0, 16)
         MinimizeBtn.Image = "rbxassetid://10751034456"
-        MinimizeBtn.ScaleType = Enum.ScaleType.Fit
+        MinimizeBtn.ScaleType = Enum.ScaleType.Fit -- emniyet olsun
         
         local sizeTween = TweenService:Create(MainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = originalSize})
         sizeTween:Play()
@@ -611,44 +611,6 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
--- ===============================
--- KATEGORİ BAŞLIK OLUŞTURUCU
--- ===============================
-local function CreateCategoryHeader(title)
-    local header = Instance.new("Frame", StarScroll)
-    header.Size = UDim2.new(1, -6, 0, 30)
-    header.BackgroundTransparency = 1
-    header.LayoutOrder = layoutCounter + 1
-    layoutCounter = layoutCounter + 1
-
-    local lineLeft = Instance.new("Frame", header)
-    lineLeft.Size = UDim2.new(0.3, -10, 0, 1.5)
-    lineLeft.Position = UDim2.new(0, 0, 0.5, 0)
-    lineLeft.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    lineLeft.BackgroundTransparency = 0.5
-
-    local label = Instance.new("TextLabel", header)
-    label.Size = UDim2.new(0.4, 0, 1, 0)
-    label.Position = UDim2.new(0.3, 0, 0, 0)
-    label.BackgroundTransparency = 1
-    label.Text = title
-    label.TextColor3 = Color3.fromRGB(180, 190, 255)
-    label.Font = Enum.Font.GothamBold
-    label.TextSize = 11
-    label.TextXAlignment = Enum.TextXAlignment.Center
-
-    local lineRight = Instance.new("Frame", header)
-    lineRight.Size = UDim2.new(0.3, -10, 0, 1.5)
-    lineRight.Position = UDim2.new(0.7, 10, 0.5, 0)
-    lineRight.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    lineRight.BackgroundTransparency = 0.5
-
-    return header
-end
-
--- ===============================
--- MOD PANEL OLUŞTURUCU
--- ===============================
 local panelsList = {}; local layoutCounter = 0
 local function CreateModPanel(name, hasSlider, maxSliderVal, defaultSliderVal, onToggle, onSliderChange)
     layoutCounter = layoutCounter + 1
@@ -700,15 +662,7 @@ local function CreateModPanel(name, hasSlider, maxSliderVal, defaultSliderVal, o
     table.insert(panelsList, {Label = Lbl, Key = name})
 end
 
--- ==========================================
--- HİLE PANELLERİ – KATEGORİLER HALİNDE
--- ==========================================
-
--- ===============================
--- 1. GRUP: HAREKET (MOVEMENT)
--- ===============================
-CreateCategoryHeader("Hareket (Movement)")
-
+-- Fly, ESP, WalkSpeed, JumpPower, InfJump, Noclip Mantıkları
 local isFlying, flySpeed, flyBV, flyBG, flyLoop = false, 50, nil, nil, nil
 local function StartFly()
     local char = LocalPlayer.Character
@@ -733,250 +687,96 @@ local function StopFly()
 end
 CreateModPanel("Fly Hack", true, 500, 50, function(active) if active then StartFly() else StopFly() end end, function(val) flySpeed = val end)
 
-CreateModPanel("Speed Changer", true, 500, 16, function(active) 
-    local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
-    if h then h.WalkSpeed = active and 100 or 16 end
-    ShowNotification("Speed", active and Translates[CurrentLanguage].SpeedActive or Translates[CurrentLanguage].SpeedReset, 2)
-end, function(val)
-    local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
-    if h then h.WalkSpeed = val end
-end)
-
--- ===============================
--- 2. GRUP: ZIPLAMA (JUMPING)
--- ===============================
-CreateCategoryHeader("Zıplama (Jumping)")
-
-CreateModPanel("JumpPower", true, 500, 50, function(active) 
-    local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
-    if h then h.UseJumpPower = true; h.JumpPower = active and 150 or 50 end
-    ShowNotification("Jump", active and Translates[CurrentLanguage].JumpActive or Translates[CurrentLanguage].JumpReset, 2)
-end, function(val)
-    local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
-    if h then h.UseJumpPower = true; h.JumpPower = val end
-end)
-
-local infJumpEnabled = false
-UserInputService.JumpRequest:Connect(function() 
-    if infJumpEnabled then 
-        local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
-        if h then h:ChangeState(Enum.HumanoidStateType.Jumping) end
+local espEnabled = false; local ESPFolder = Instance.new("Folder", CoreGui); ESPFolder.Name = "HiddenDarkerESP"
+local function ApplyESPToAll()
+    ESPFolder:ClearAllChildren(); if not espEnabled then return end
+    for _, p in ipairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer and p.Character then
+            local hl = Instance.new("Highlight", ESPFolder); hl.Adornee = p.Character; hl.FillColor = CurrentESPColor; hl.OutlineColor = Color3.new(1,1,1); hl.FillTransparency = 0.5
+        end
     end
-end)
-CreateModPanel("Infinite Jump", false, 0, 0, function(active) 
-    infJumpEnabled = active
-    ShowNotification("Inf Jump", active and Translates[CurrentLanguage].InfActive or Translates[CurrentLanguage].InfDeactive, 2)
-end, nil)
-
--- ===============================
--- 3. GRUP: GÖRSELLER & FİZİK
--- ===============================
-CreateCategoryHeader("Görseller & Fizik (Visuals & Physics)")
-
+end
+ApplyESPBtn.MouseButton1Click:Connect(function() ESPPickerFrame.Visible = false; ApplyESPToAll(); ShowNotification("ESP", Translates[CurrentLanguage].EspApplied, 3) end)
+CreateModPanel("Player ESP", false, 0, 0, function(active) espEnabled = active; if active then ESPPickerFrame.Visible = true else ESPPickerFrame.Visible = false; ESPFolder:ClearAllChildren() end end, nil)
+CreateModPanel("Speed Changer", true, 500, 16, function(active) local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid"); if h then h.WalkSpeed = active and 100 or 16 end; ShowNotification("Speed", active and Translates[CurrentLanguage].SpeedActive or Translates[CurrentLanguage].SpeedReset, 2) end, function(val) local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid"); if h then h.WalkSpeed = val end end)
+CreateModPanel("JumpPower", true, 500, 50, function(active) local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid"); if h then h.UseJumpPower = true; h.JumpPower = active and 150 or 50 end; ShowNotification("Jump", active and Translates[CurrentLanguage].JumpActive or Translates[CurrentLanguage].JumpReset, 2) end, function(val) local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid"); if h then h.UseJumpPower = true; h.JumpPower = val end end)
+local infJumpEnabled = false; UserInputService.JumpRequest:Connect(function() if infJumpEnabled then local h = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid"); if h then h:ChangeState(Enum.HumanoidStateType.Jumping) end end end)
+CreateModPanel("Infinite Jump", false, 0, 0, function(active) infJumpEnabled = active; ShowNotification("Inf Jump", active and Translates[CurrentLanguage].InfActive or Translates[CurrentLanguage].InfDeactive, 2) end, nil)
 local noclipConnection, noclipActive = nil, false
 CreateModPanel("Noclip", false, 0, 0, function(active)
     noclipActive = active
     if active then
-        noclipConnection = RunService.Stepped:Connect(function() 
-            if LocalPlayer.Character then 
-                for _, part in ipairs(LocalPlayer.Character:GetDescendants()) do 
-                    if part:IsA("BasePart") then part.CanCollide = false end 
-                end 
-            end 
-        end)
+        noclipConnection = RunService.Stepped:Connect(function() if LocalPlayer.Character then for _, part in ipairs(LocalPlayer.Character:GetDescendants()) do if part:IsA("BasePart") then part.CanCollide = false end end end end)
         ShowNotification("Noclip", Translates[CurrentLanguage].NoclipActive, 2)
     else 
-        if noclipConnection then noclipConnection:Disconnect() end
-        ShowNotification("Noclip", Translates[CurrentLanguage].NoclipDeactive, 2) 
+        if noclipConnection then noclipConnection:Disconnect() end; ShowNotification("Noclip", Translates[CurrentLanguage].NoclipDeactive, 2) 
     end
 end, nil)
 
-local espEnabled = false
-local ESPFolder = Instance.new("Folder", CoreGui)
-ESPFolder.Name = "HiddenDarkerESP"
-
-local function ApplyESPToAll()
-    ESPFolder:ClearAllChildren()
-    if not espEnabled then return end
-    for _, p in ipairs(Players:GetPlayers()) do
-        if p ~= LocalPlayer and p.Character then
-            local hl = Instance.new("Highlight", ESPFolder)
-            hl.Adornee = p.Character
-            hl.FillColor = CurrentESPColor
-            hl.OutlineColor = Color3.new(1,1,1)
-            hl.FillTransparency = 0.5
-        end
-    end
-end
-
-ApplyESPBtn.MouseButton1Click:Connect(function()
-    ESPPickerFrame.Visible = false
-    ApplyESPToAll()
-    ShowNotification("ESP", Translates[CurrentLanguage].EspApplied, 3)
-end)
-
-CreateModPanel("Player ESP", false, 0, 0, function(active)
-    espEnabled = active
-    if active then
-        ESPPickerFrame.Visible = true
-    else
-        ESPPickerFrame.Visible = false
-        ESPFolder:ClearAllChildren()
-    end
-end, nil)
-
--- ===============================
--- 4. GRUP: DİĞER (MISC)
--- ===============================
-CreateCategoryHeader("Diğer (Misc)")
-
--- SPAM PANEL (ÖZEL)
+-- SPAM & SPECTATE PANELS
 layoutCounter = layoutCounter + 1
-local SpamPanel = Instance.new("Frame", StarScroll)
-SpamPanel.Size = UDim2.new(1, -6, 0, 55); SpamPanel.LayoutOrder = layoutCounter
+local SpamPanel = Instance.new("Frame", StarScroll); SpamPanel.Size = UDim2.new(1, -6, 0, 55); SpamPanel.LayoutOrder = layoutCounter
 ApplyWaveGradient(SpamPanel, Color3.fromRGB(80, 0, 0), Color3.fromRGB(15, 15, 20))
 Instance.new("UICorner", SpamPanel).CornerRadius = UDim.new(0, 8)
 local spStr = Instance.new("UIStroke", SpamPanel)
 spStr.Color = Color3.fromRGB(255, 255, 255); spStr.Transparency = 0.85; spStr.Thickness = 1
 
-local SpamLbl = Instance.new("TextLabel", SpamPanel)
-SpamLbl.Size = UDim2.new(0.3, 0, 1, 0); SpamLbl.Position = UDim2.new(0, 12, 0, 0)
-SpamLbl.BackgroundTransparency = 1; SpamLbl.Text = "Mesaj Spamlayıcı"
-SpamLbl.TextColor3 = Color3.fromRGB(235, 235, 240); SpamLbl.Font = Enum.Font.GothamBold
-SpamLbl.TextSize = 11; SpamLbl.TextXAlignment = Enum.TextXAlignment.Left
-
-local SpamBoxBg = Instance.new("Frame", SpamPanel)
-SpamBoxBg.Size = UDim2.new(0.45, 0, 0, 32); SpamBoxBg.Position = UDim2.new(0.32, 0, 0.5, -16)
-SpamBoxBg.BackgroundColor3 = Color3.fromRGB(30, 31, 38)
-Instance.new("UICorner", SpamBoxBg).CornerRadius = UDim.new(0, 6)
-local SpamBoxStroke = Instance.new("UIStroke", SpamBoxBg)
-SpamBoxStroke.Color = Color3.fromRGB(255, 255, 255); SpamBoxStroke.Transparency = 0.85; SpamBoxStroke.Thickness = 1
-
-local SpamBox = Instance.new("TextBox", SpamBoxBg)
-SpamBox.Size = UDim2.new(1, -16, 1, 0); SpamBox.Position = UDim2.new(0, 8, 0, 0)
-SpamBox.BackgroundTransparency = 1; SpamBox.PlaceholderText = "Mesaj yazın..."; SpamBox.Text = ""
-SpamBox.TextColor3 = Color3.fromRGB(255, 255, 255); SpamBox.Font = Enum.Font.GothamMedium
-SpamBox.TextSize = 10; SpamBox.TextXAlignment = Enum.TextXAlignment.Left
-
-local SpamToggleBtn = Instance.new("TextButton", SpamPanel)
-SpamToggleBtn.Size = UDim2.new(0.2, 0, 0, 32); SpamToggleBtn.Position = UDim2.new(0.78, 0, 0.5, -16)
-SpamToggleBtn.BackgroundColor3 = Color3.fromRGB(40, 42, 50); SpamToggleBtn.Text = "Başlat"
-SpamToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255); SpamToggleBtn.Font = Enum.Font.GothamBold
-SpamToggleBtn.TextSize = 11; Instance.new("UICorner", SpamToggleBtn).CornerRadius = UDim.new(0, 6)
-
+local SpamLbl = Instance.new("TextLabel", SpamPanel); SpamLbl.Size = UDim2.new(0.3, 0, 1, 0); SpamLbl.Position = UDim2.new(0, 12, 0, 0); SpamLbl.BackgroundTransparency = 1; SpamLbl.Text = "Mesaj Spamlayıcı"; SpamLbl.TextColor3 = Color3.fromRGB(235, 235, 240); SpamLbl.Font = Enum.Font.GothamBold; SpamLbl.TextSize = 11; SpamLbl.TextXAlignment = Enum.TextXAlignment.Left
+local SpamBoxBg = Instance.new("Frame", SpamPanel); SpamBoxBg.Size = UDim2.new(0.45, 0, 0, 32); SpamBoxBg.Position = UDim2.new(0.32, 0, 0.5, -16); SpamBoxBg.BackgroundColor3 = Color3.fromRGB(30, 31, 38); Instance.new("UICorner", SpamBoxBg).CornerRadius = UDim.new(0, 6)
+local SpamBoxStroke = Instance.new("UIStroke", SpamBoxBg); SpamBoxStroke.Color = Color3.fromRGB(255, 255, 255); SpamBoxStroke.Transparency = 0.85; SpamBoxStroke.Thickness = 1
+local SpamBox = Instance.new("TextBox", SpamBoxBg); SpamBox.Size = UDim2.new(1, -16, 1, 0); SpamBox.Position = UDim2.new(0, 8, 0, 0); SpamBox.BackgroundTransparency = 1; SpamBox.PlaceholderText = "Mesaj yazın..."; SpamBox.Text = ""; SpamBox.TextColor3 = Color3.fromRGB(255, 255, 255); SpamBox.Font = Enum.Font.GothamMedium; SpamBox.TextSize = 10; SpamBox.TextXAlignment = Enum.TextXAlignment.Left
+local SpamToggleBtn = Instance.new("TextButton", SpamPanel); SpamToggleBtn.Size = UDim2.new(0.2, 0, 0, 32); SpamToggleBtn.Position = UDim2.new(0.78, 0, 0.5, -16); SpamToggleBtn.BackgroundColor3 = Color3.fromRGB(40, 42, 50); SpamToggleBtn.Text = "Başlat"; SpamToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255); SpamToggleBtn.Font = Enum.Font.GothamBold; SpamToggleBtn.TextSize = 11; Instance.new("UICorner", SpamToggleBtn).CornerRadius = UDim.new(0, 6)
 local spamming, spamThread = false, nil
 SpamToggleBtn.MouseButton1Click:Connect(function()
     spamming = not spamming
     if spamming then
-        SpamToggleBtn.Text = Translates[CurrentLanguage].Stop
-        SpamToggleBtn.BackgroundColor3 = Color3.fromRGB(150, 40, 40)
+        SpamToggleBtn.Text = Translates[CurrentLanguage].Stop; SpamToggleBtn.BackgroundColor3 = Color3.fromRGB(150, 40, 40)
         spamThread = task.spawn(function()
             while spamming do
                 local msg = SpamBox.Text
                 if msg ~= "" then
                     local tcs = game:GetService("TextChatService")
                     if tcs.ChatVersion == Enum.ChatVersion.TextChatService then
-                        local gc = tcs:FindFirstChild("TextChannels") and tcs.TextChannels:FindFirstChild("RBXGeneral")
-                        if gc then gc:SendAsync(msg) end
+                        local gc = tcs:FindFirstChild("TextChannels") and tcs.TextChannels:FindFirstChild("RBXGeneral"); if gc then gc:SendAsync(msg) end
                     else
                         local ce = game:GetService("ReplicatedStorage"):FindFirstChild("DefaultChatSystemChatEvents")
-                        local sm = ce and ce:FindFirstChild("SayMessageRequest")
-                        if sm then sm:FireServer(msg, "All") end
+                        local sm = ce and ce:FindFirstChild("SayMessageRequest"); if sm then sm:FireServer(msg, "All") end
                     end
                 end
                 task.wait(0.5)
             end
         end)
-    else
-        SpamToggleBtn.Text = Translates[CurrentLanguage].Start
-        SpamToggleBtn.BackgroundColor3 = Color3.fromRGB(40, 42, 50)
-        if spamThread then task.cancel(spamThread); spamThread = nil end
-    end
+    else SpamToggleBtn.Text = Translates[CurrentLanguage].Start; SpamToggleBtn.BackgroundColor3 = Color3.fromRGB(40, 42, 50); if spamThread then task.cancel(spamThread); spamThread = nil end end
 end)
 
--- SPECTATE PANEL (ÖZEL)
 layoutCounter = layoutCounter + 1
-local SpecPanel = Instance.new("Frame", StarScroll)
-SpecPanel.Size = UDim2.new(1, -6, 0, 110); SpecPanel.LayoutOrder = layoutCounter
+local SpecPanel = Instance.new("Frame", StarScroll); SpecPanel.Size = UDim2.new(1, -6, 0, 110); SpecPanel.LayoutOrder = layoutCounter
 ApplyWaveGradient(SpecPanel, Color3.fromRGB(80, 0, 0), Color3.fromRGB(15, 15, 20))
 Instance.new("UICorner", SpecPanel).CornerRadius = UDim.new(0, 8)
 local scStr = Instance.new("UIStroke", SpecPanel)
 scStr.Color = Color3.fromRGB(255, 255, 255); scStr.Transparency = 0.85; scStr.Thickness = 1
 
-local SpecLbl = Instance.new("TextLabel", SpecPanel)
-SpecLbl.Size = UDim2.new(0.3, 0, 0, 50); SpecLbl.Position = UDim2.new(0, 12, 0, 0)
-SpecLbl.BackgroundTransparency = 1; SpecLbl.Text = "Oyuncuya Odaklan"
-SpecLbl.TextColor3 = Color3.fromRGB(235, 235, 240); SpecLbl.Font = Enum.Font.GothamBold
-SpecLbl.TextSize = 11; SpecLbl.TextXAlignment = Enum.TextXAlignment.Left
-
-local SpecBoxBg = Instance.new("Frame", SpecPanel)
-SpecBoxBg.Size = UDim2.new(0.45, 0, 0, 32); SpecBoxBg.Position = UDim2.new(0.32, 0, 0, 10)
-SpecBoxBg.BackgroundColor3 = Color3.fromRGB(30, 31, 38)
-Instance.new("UICorner", SpecBoxBg).CornerRadius = UDim.new(0, 6)
-local SpecBoxStroke = Instance.new("UIStroke", SpecBoxBg)
-SpecBoxStroke.Color = Color3.fromRGB(255, 255, 255); SpecBoxStroke.Transparency = 0.85; SpecBoxStroke.Thickness = 1
-
-local SpecBox = Instance.new("TextBox", SpecBoxBg)
-SpecBox.Size = UDim2.new(1, -16, 1, 0); SpecBox.Position = UDim2.new(0, 8, 0, 0)
-SpecBox.BackgroundTransparency = 1; SpecBox.PlaceholderText = "Oyuncu Adı..."; SpecBox.Text = ""
-SpecBox.TextColor3 = Color3.fromRGB(255, 255, 255); SpecBox.Font = Enum.Font.GothamMedium
-SpecBox.TextSize = 10; SpecBox.TextXAlignment = Enum.TextXAlignment.Left
-
-local SpecToggleBtn = Instance.new("TextButton", SpecPanel)
-SpecToggleBtn.Size = UDim2.new(0.2, 0, 0, 32); SpecToggleBtn.Position = UDim2.new(0.78, 0, 0, 10)
-SpecToggleBtn.BackgroundColor3 = Color3.fromRGB(30, 90, 150); SpecToggleBtn.Text = "Odaklan"
-SpecToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255); SpecToggleBtn.Font = Enum.Font.GothamBold
-SpecToggleBtn.TextSize = 11; Instance.new("UICorner", SpecToggleBtn).CornerRadius = UDim.new(0, 6)
-
-local SpecLastBtn = Instance.new("TextButton", SpecPanel)
-SpecLastBtn.Size = UDim2.new(0.45, -5, 0, 32); SpecLastBtn.Position = UDim2.new(0.05, 0, 0, 65)
-SpecLastBtn.BackgroundColor3 = Color3.fromRGB(40, 42, 50); SpecLastBtn.Text = "Son Oyuncuya Odaklan"
-SpecLastBtn.TextColor3 = Color3.fromRGB(200, 200, 200); SpecLastBtn.Font = Enum.Font.GothamBold
-SpecLastBtn.TextSize = 10; Instance.new("UICorner", SpecLastBtn).CornerRadius = UDim.new(0, 6)
-
-local SpecRandomBtn = Instance.new("TextButton", SpecPanel)
-SpecRandomBtn.Size = UDim2.new(0.45, -5, 0, 32); SpecRandomBtn.Position = UDim2.new(0.5, 5, 0, 65)
-SpecRandomBtn.BackgroundColor3 = Color3.fromRGB(40, 42, 50); SpecRandomBtn.Text = "Rastgele Odaklan"
-SpecRandomBtn.TextColor3 = Color3.fromRGB(200, 200, 200); SpecRandomBtn.Font = Enum.Font.GothamBold
-SpecRandomBtn.TextSize = 10; Instance.new("UICorner", SpecRandomBtn).CornerRadius = UDim.new(0, 6)
-
+local SpecLbl = Instance.new("TextLabel", SpecPanel); SpecLbl.Size = UDim2.new(0.3, 0, 0, 50); SpecLbl.Position = UDim2.new(0, 12, 0, 0); SpecLbl.BackgroundTransparency = 1; SpecLbl.Text = "Oyuncuya Odaklan"; SpecLbl.TextColor3 = Color3.fromRGB(235, 235, 240); SpecLbl.Font = Enum.Font.GothamBold; SpecLbl.TextSize = 11; SpecLbl.TextXAlignment = Enum.TextXAlignment.Left
+local SpecBoxBg = Instance.new("Frame", SpecPanel); SpecBoxBg.Size = UDim2.new(0.45, 0, 0, 32); SpecBoxBg.Position = UDim2.new(0.32, 0, 0, 10); SpecBoxBg.BackgroundColor3 = Color3.fromRGB(30, 31, 38); Instance.new("UICorner", SpecBoxBg).CornerRadius = UDim.new(0, 6)
+local SpecBoxStroke = Instance.new("UIStroke", SpecBoxBg); SpecBoxStroke.Color = Color3.fromRGB(255, 255, 255); SpecBoxStroke.Transparency = 0.85; SpecBoxStroke.Thickness = 1
+local SpecBox = Instance.new("TextBox", SpecBoxBg); SpecBox.Size = UDim2.new(1, -16, 1, 0); SpecBox.Position = UDim2.new(0, 8, 0, 0); SpecBox.BackgroundTransparency = 1; SpecBox.PlaceholderText = "Oyuncu Adı..."; SpecBox.Text = ""; SpecBox.TextColor3 = Color3.fromRGB(255, 255, 255); SpecBox.Font = Enum.Font.GothamMedium; SpecBox.TextSize = 10; SpecBox.TextXAlignment = Enum.TextXAlignment.Left
+local SpecToggleBtn = Instance.new("TextButton", SpecPanel); SpecToggleBtn.Size = UDim2.new(0.2, 0, 0, 32); SpecToggleBtn.Position = UDim2.new(0.78, 0, 0, 10); SpecToggleBtn.BackgroundColor3 = Color3.fromRGB(30, 90, 150); SpecToggleBtn.Text = "Odaklan"; SpecToggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255); SpecToggleBtn.Font = Enum.Font.GothamBold; SpecToggleBtn.TextSize = 11; Instance.new("UICorner", SpecToggleBtn).CornerRadius = UDim.new(0, 6)
+local SpecLastBtn = Instance.new("TextButton", SpecPanel); SpecLastBtn.Size = UDim2.new(0.45, -5, 0, 32); SpecLastBtn.Position = UDim2.new(0.05, 0, 0, 65); SpecLastBtn.BackgroundColor3 = Color3.fromRGB(40, 42, 50); SpecLastBtn.Text = "Son Oyuncuya Odaklan"; SpecLastBtn.TextColor3 = Color3.fromRGB(200, 200, 200); SpecLastBtn.Font = Enum.Font.GothamBold; SpecLastBtn.TextSize = 10; Instance.new("UICorner", SpecLastBtn).CornerRadius = UDim.new(0, 6)
+local SpecRandomBtn = Instance.new("TextButton", SpecPanel); SpecRandomBtn.Size = UDim2.new(0.45, -5, 0, 32); SpecRandomBtn.Position = UDim2.new(0.5, 5, 0, 65); SpecRandomBtn.BackgroundColor3 = Color3.fromRGB(40, 42, 50); SpecRandomBtn.Text = "Rastgele Odaklan"; SpecRandomBtn.TextColor3 = Color3.fromRGB(200, 200, 200); SpecRandomBtn.Font = Enum.Font.GothamBold; SpecRandomBtn.TextSize = 10; Instance.new("UICorner", SpecRandomBtn).CornerRadius = UDim.new(0, 6)
 local lastLookatTarget, spectating = nil, false
 local function SetSpectate(target)
     local cam = workspace.CurrentCamera
     if target and target.Character and target.Character:FindFirstChild("Humanoid") then
-        cam.CameraSubject = target.Character.Humanoid
-        lastLookatTarget = target
-        spectating = true
-        SpecToggleBtn.Text = Translates[CurrentLanguage].UnlookBtn
-        SpecToggleBtn.BackgroundColor3 = Color3.fromRGB(150, 40, 40)
-        ShowNotification("Spectate", Translates[CurrentLanguage].SpecActive .. target.DisplayName, 3)
+        cam.CameraSubject = target.Character.Humanoid; lastLookatTarget = target; spectating = true
+        SpecToggleBtn.Text = Translates[CurrentLanguage].UnlookBtn; SpecToggleBtn.BackgroundColor3 = Color3.fromRGB(150, 40, 40); ShowNotification("Spectate", Translates[CurrentLanguage].SpecActive .. target.DisplayName, 3)
     else
-        cam.CameraSubject = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
-        spectating = false
-        SpecToggleBtn.Text = Translates[CurrentLanguage].LookatBtn
-        SpecToggleBtn.BackgroundColor3 = Color3.fromRGB(30, 90, 150)
-        ShowNotification("Spectate", Translates[CurrentLanguage].SpecDeactive, 2)
+        cam.CameraSubject = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid"); spectating = false
+        SpecToggleBtn.Text = Translates[CurrentLanguage].LookatBtn; SpecToggleBtn.BackgroundColor3 = Color3.fromRGB(30, 90, 150); ShowNotification("Spectate", Translates[CurrentLanguage].SpecDeactive, 2)
     end
 end
-
-SpecToggleBtn.MouseButton1Click:Connect(function()
-    if spectating then
-        SetSpectate(nil)
-    else
-        local target = GetPlayerFromPart(SpecBox.Text)
-        if target then SetSpectate(target) else ShowNotification("Error", "Player not found!", 2) end
-    end
-end)
-
-SpecLastBtn.MouseButton1Click:Connect(function()
-    if lastLookatTarget then SetSpectate(lastLookatTarget) else ShowNotification("Error", "No last target found!", 2) end
-end)
-
-SpecRandomBtn.MouseButton1Click:Connect(function()
-    local plrs, valid = Players:GetPlayers(), {}
-    for _, p in ipairs(plrs) do if p ~= LocalPlayer then table.insert(valid, p) end end
-    if #valid > 0 then SetSpectate(valid[math.random(1, #valid)]) else ShowNotification("Error", "No other players found!", 2) end
-end)
+SpecToggleBtn.MouseButton1Click:Connect(function() if spectating then SetSpectate(nil) else local target = GetPlayerFromPart(SpecBox.Text); if target then SetSpectate(target) else ShowNotification("Error", "Player not found!", 2) end end end)
+SpecLastBtn.MouseButton1Click:Connect(function() if lastLookatTarget then SetSpectate(lastLookatTarget) else ShowNotification("Error", "No last target found!", 2) end end)
+SpecRandomBtn.MouseButton1Click:Connect(function() local plrs, valid = Players:GetPlayers(), {}; for _, p in ipairs(plrs) do if p ~= LocalPlayer then table.insert(valid, p) end end; if #valid > 0 then SetSpectate(valid[math.random(1, #valid)]) else ShowNotification("Error", "No other players found!", 2) end end)
 
 -- ==========================================
 -- [5] FRIENDS TAB
@@ -1190,10 +990,6 @@ ChangelogText.Text = [[
   - Gorgeous new Wave Gradients for Cards, Hack Panels, Teleport, and Settings.
   - Perfected minimize icon padding.
   - Brand new sleek Sidebar Icons for navigation.
-  
-• Features Organized:
-  - Hacks now grouped into categories: Movement, Jumping, Visuals & Physics, Misc.
-  - Clean category headers with elegant line separators.
 ]]
 
 -- ==========================================
